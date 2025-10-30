@@ -11,6 +11,7 @@ var grid_position: Vector2i = Vector2i.ZERO
 ## A simple boolean state for example use.
 var is_active: bool = false
 var occupied_unit: Unit = null # NEW: Tracks the unit currently on this region
+var is_selected: bool = false
 
 # Constants for the region's physical dimensions.
 const REGION_SIZE: float = 80.0  # Width and depth of the tile
@@ -36,7 +37,9 @@ func _init(position: Vector2i = Vector2i.ZERO) -> void:
 		float(position.y) * (REGION_SIZE + (REGION_SIZE / 8.0))
 	)
 	
-
+	if self.position.x == 0 && position.y == 0:
+		is_selected = true
+		
 	# Set up the visual mesh and collision shape
 	_setup_visuals_and_collision()
 
@@ -126,3 +129,12 @@ func remove_unit() -> Unit:
 	unit_to_remove.grid_position = Vector2i(-1, -1) # Mark unit as off-grid
 	print("Unit %s removed from region %s." % [unit_to_remove.name, name])
 	return unit_to_remove
+
+func _process(delta):
+	if is_selected:
+		pass
+		#var node : StaticBody3D = get_node("PhysicsRoot")
+		var node2 : MeshInstance3D =  get_node("PhysicsRoot").get_node("TileMesh")
+		var material : StandardMaterial3D = node2.get_active_material(0)
+		material.albedo_color = Color(0.8 + (0.2 * randf()), 0.8, 0.8)
+		

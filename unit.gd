@@ -32,11 +32,6 @@ func _init(name_suffix: String = "") -> void:
 	# This prevents the unit from phasing through the ground on spawn.
 	set_sleeping(false)
 	# NEW: Configure collision layers and masks
-	# Units are on Layer 2 (used for unit-to-unit interaction later)
-	#self.collision_layer = 1 << 1 
-	## Units check Layer 1 (the ground/Regions)
-	#self.collision_mask = 1 << 0 
-	
 	self.set_collision_layer_value(LAYER_UNIT, true) # Units are on their own layer (for raycasting)
 	self.set_collision_mask_value(LAYER_REGION, true)  # UNITS collide only with the REGION
 
@@ -61,17 +56,23 @@ func _setup_visuals_and_collision() -> void:
 	
 	var capsule_mesh := CapsuleMesh.new()
 	capsule_mesh.radius = UNIT_RADIUS
-	capsule_mesh.height = UNIT_HEIGHT
+	capsule_mesh.height = UNIT_HEIGHT + (randf()*60.0)
+	
+	var prism_mesh := PrismMesh.new()
+	prism_mesh.size = Vector3( 2.0, 10.0, 20.0)
 	
 	# Create a simple red material for units
 	var standard_material := StandardMaterial3D.new()
-	standard_material.albedo_color = Color(0.8, 0.2, 0.2) 
+	var gray = randf_range( 0.2, 0.85);
+	standard_material.albedo_color = Color(gray, gray, gray) 
 	capsule_mesh.material = standard_material
+	prism_mesh.material = standard_material
 	
 	mesh_instance.mesh = capsule_mesh
+	#mesh_instance.mesh = prism_mesh
 	
 	# Offset the mesh vertically so its base sits at the parent's origin (Y=0).
-	mesh_instance.position = Vector3(0.0, UNIT_HEIGHT / 2.0, 0.0) 
+	mesh_instance.position = Vector3(0.0, capsule_mesh.height / 2.0, 0.0) 
 	self.add_child(mesh_instance)
 	
 	# --- 3. Collision Shape (The Bounding Capsule) ---
@@ -80,11 +81,11 @@ func _setup_visuals_and_collision() -> void:
 	
 	var capsule_shape := CapsuleShape3D.new()
 	capsule_shape.radius = UNIT_RADIUS
-	capsule_shape.height = UNIT_HEIGHT
+	capsule_shape.height = capsule_mesh.height
 	
 	collision_shape.shape = capsule_shape
 	# Offset the collision shape to match the mesh.
-	collision_shape.position = Vector3(0.0, UNIT_HEIGHT / 2.0, 0.0)
+	collision_shape.position = Vector3(0.0, capsule_shape.height / 2.0, 0.0)
 	
 
 	self.add_child(collision_shape)

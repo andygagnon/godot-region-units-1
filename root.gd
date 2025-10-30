@@ -76,27 +76,50 @@ func _initialize_regions() -> void:
 func _initialize_units() -> void:
 	print("\n--- Starting Unit Initialization ---")
 	
-	var unit_a: Unit = Unit.new("Hero")
-	var unit_b: Unit = Unit.new("Enemy")
-	
+	#var unit_a: Unit = Unit.new("Hero")
 	# Units must be added to the scene tree (under WorldManager)
 	# before they are placed using the Region's methods.
-	add_child(unit_a)
-	add_child(unit_b)
-	
+	#add_child(unit_a)
+	#add_child(unit_b)
+	#var unit_b: Unit = Unit.new("Enemy")
 	# Place Unit A at (0, 0)
-	var start_region: Region = get_region(0, 0)
-	if start_region:
-		start_region.add_unit(unit_a)
+	#var start_region: Region = get_region(0, 0)
+	#if start_region:
+		#start_region.add_unit(unit_a)
+		
+		
+	for x in range( GRID_SIZE):
+		for z in range(2):
+			var unit_t;
+			var region_t;
+			unit_t = Unit.new("Enemy")
+			add_child(unit_t)
+			region_t = get_region( x, GRID_SIZE - 1 - z)
+			if region_t:
+				region_t.add_unit( unit_t)
+	
+	for x in range( GRID_SIZE):
+		for z in range(2):
+			var unit_t;
+			var region_t;
+			unit_t = Unit.new("Hero")
+			add_child(unit_t)
+			region_t = get_region( x, z)
+			if region_t:
+				region_t.add_unit( unit_t)
+	
 	
 	# Place Unit B at (7, 7)
-	var end_region: Region = get_region(GRID_SIZE - 1, GRID_SIZE - 1)
-	if end_region:
-		end_region.add_unit(unit_b)
+	#var end_region: Region = get_region(GRID_SIZE - 1, GRID_SIZE - 1)
+	#if end_region:
+		#end_region.add_unit(unit_b)
 		
+		
+
+			
 	print("Unit initialization complete.")
-	print("Placed %s at %s" % [unit_a.name, unit_a.grid_position])
-	print("Placed %s at %s" % [unit_b.name, unit_b.grid_position])
+	#print("Placed %s at %s" % [unit_a.name, unit_a.grid_position])
+	#print("Placed %s at %s" % [unit_b.name, unit_b.grid_position])
 
 
 ## Sets up a Camera3D positioned to view the entire grid.
@@ -112,8 +135,8 @@ func _setup_camera() -> void:
 	# The '60' is a good height to capture the full 80x80 area.
 	camera.position = Vector3(
 		center_target.x,
-		580.0,
-		center_target.z + 0.0 # Move back a bit on the Z axis
+		490.0,
+		center_target.z - 360.0 - 100.0# Move back a bit on the Z axis
 	)
 	#camera.position = Vector3(
 		#0.0,
